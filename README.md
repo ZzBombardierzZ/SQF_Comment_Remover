@@ -24,6 +24,7 @@ Let me know if you run into any issues or have any suggestions for the future. I
 
 
 ## Update History:
+* v1.1 - 6/28/22: New comment parsing method. Fixes issues with strings such as `https://` and similar which ARE NOT comments.
 * v1.0 - 6/28/22: Initial release.
 
 ## Legal

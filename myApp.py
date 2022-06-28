@@ -1,9 +1,13 @@
 import re, os
+from pyparsing import cppStyleComment,dblQuotedString
+
+cppStyleComment.ignore(dblQuotedString)
 
 # I did not write the comment remover. I had a version I made but it had bugs. This was found on the internet.
 # https://stackoverflow.com/a/18381470
 def remove_comments(string):
-    pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
+    #pattern = r"(\".*?\"|\'.*?\')|(/\*.*?\*/|//[^\r\n]*$)"
+    pattern = r"(\".*?(?<!\\)\"|\'.*?(?<!\\)\')|(/\*.*?\*/|//[^\r\n]*$)"
     # first group captures quoted strings (double or single)
     # second group captures comments (//single-line or /* multi-line */)
     regex = re.compile(pattern, re.MULTILINE|re.DOTALL)
@@ -47,22 +51,21 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
     with open(file_path, "r") as f:
         data = f.read()
 
-    cleaned_data = ""
-
     if remove_comments_bool:
         print("Removing Comments: "+file_path)
-        cleaned_data = remove_comments(data) # remove comments (new way found online)
+        # data = remove_comments(data) # remove comments (new way found online)
+        data = cppStyleComment.suppress().transformString(data) #newer/safer method
 
     if remove_empty_lines_bool:
         print("Removing empty lines: "+file_path)
-        cleaned_data = remove_empty_lines(cleaned_data)
+        data = remove_empty_lines(data)
 
     if remove_newlines_bool:
         print("Removing new lines: "+file_path)
-        cleaned_data = remove_all_newlines(cleaned_data)
+        data = remove_all_newlines(data)
 
     with open(file_path, "w") as f:
-        f.write(cleaned_data)
+        f.write(data)
 
 def get_directory_files():
     print("Getting directory paths of cwd")
@@ -82,9 +85,9 @@ def main_brain():
     directory_files = get_directory_files()
     for file_path in directory_files:
         if file_path.find(".hpp") > -1 or file_path.find(".ext") > -1:
-            clean_data_etc(file_path, True, True, False)
+            clean_data_etc(file_path, True, False, False)
         elif file_path.find(".sqf") > -1:
-            clean_data_etc(file_path, True, True, True)
+            clean_data_etc(file_path, True, False, False)
 
     print("Bomb's cleaning service has finished")
 
