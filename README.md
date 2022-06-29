@@ -30,4 +30,4 @@ Let me know if you run into any issues or have any suggestions for the future. I
 ## Legal
 * You are welcome to use this code in any way you want.
 * I am not responsible for any damage you might cause.
-* I got the comment_remover code from [here](https://stackoverflow.com/a/18381470) and I do not claim credit for writing that part. Regex is powerful and I don't want to reinvent the wheel.
+* I got the comment_remover code from [here](https://stackoverflow.com/a/18381470) and I do not claim credit for writing that part. Regex is powerful and I don't want to reinvent the wheel. This comment_remover code is no longer in use. I am now using [this method](https://stackoverflow.com/a/1656009)
