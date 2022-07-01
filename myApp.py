@@ -28,7 +28,7 @@ def remove_all_newlines(data):
     if len(data) > 0:
         if data.find("\n") > -1:
             for line in data.splitlines():
-                if line.find("#") == -1 and line.find(";") > -1:
+                if line.find("#") == -1 and line.find(";") > -1 and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
                     cleaned_data += line.rstrip() + " "
                 else :
                     cleaned_data += line + "\n"
@@ -45,7 +45,7 @@ def remove_empty_lines(data):
                     cleaned_data += line + "\n"
     return cleaned_data
 
-def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool):
+def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool, remove_extra_spaces_bool:bool):
     print("Cleaning: "+file_path)
     
     with open(file_path, "r") as f:
@@ -63,6 +63,10 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
     if remove_newlines_bool:
         print("Removing new lines: "+file_path)
         data = remove_all_newlines(data)
+    
+    if remove_extra_spaces_bool:
+        data = re.sub(r'[ \t]+', ' ', data) # remove all excess tab or space whitespace
+        data = re.sub(r'\n ', '\n', data) # remove extra space at beginning of line from last regex
 
     with open(file_path, "w") as f:
         f.write(data)
@@ -85,9 +89,9 @@ def main_brain():
     directory_files = get_directory_files()
     for file_path in directory_files:
         if file_path.find(".hpp") > -1 or file_path.find(".ext") > -1:
-            clean_data_etc(file_path, True, False, False)
+            clean_data_etc(file_path, True, True, False, True)
         elif file_path.find(".sqf") > -1:
-            clean_data_etc(file_path, True, False, False)
+            clean_data_etc(file_path, True, True, True, True)
 
     print("Bomb's cleaning service has finished")
 

@@ -24,6 +24,7 @@ Let me know if you run into any issues or have any suggestions for the future. I
 
 
 ## Update History:
+* v1.2 - 7/1/22: Updated all exes to fix issue with files being wiped with newline remover and empty line remover. Also added Excess whitespace remover and included it into clean_it_all. Turns several spaces or tabs into 1 space.
 * v1.1 - 6/28/22: New comment parsing method. Fixes issues with strings such as `https://` and similar which ARE NOT comments.
 * v1.0 - 6/28/22: Initial release.
 
