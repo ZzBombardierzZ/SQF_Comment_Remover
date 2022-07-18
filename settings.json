@@ -1,0 +1,12 @@
+{
+    "Cleaner_Config":{
+        "remove_comments": true,
+        "remove_empty_lines": true,
+        "remove_excess_spaces": true,
+        "remove_sqf_newlines": true,
+        "remove_hppOrExt_newlines": true
+    },
+    "Extras": {
+        "excessive_debug_mode": false
+    }
+}
