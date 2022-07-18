@@ -6,7 +6,7 @@ cppStyleComment.ignore(dblQuotedString)
 def print_and_log(message:str):
     print(message)
     with open("logs.txt", "a") as f:
-        f.write(message + "\n")
+        f.write(f"{message}\n")
 
 # I did not write the comment remover. I had a version I made but it had bugs. This was found on the internet.
 # https://stackoverflow.com/a/18381470
@@ -33,10 +33,12 @@ def remove_all_newlines(data):
     if len(data) > 0:
         if data.find("\n") > -1:
             for line in data.splitlines():
-                if line.find("#") == -1 and (line.find(";") > -1 or line.find("{")) and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
-                    cleaned_data += line.rstrip() + " "
+                if line.find("#") == -1 and (line.find(";") > -1 or line.find("{") > -1) and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
+                    cleaned_data = f"{cleaned_data}{line.rstrip()} "
                 else :
-                    cleaned_data += line + "\n"
+                    cleaned_data = f"{cleaned_data}{line}\n"
+        else:
+            cleaned_data = data
         cleaned_data = re.sub(r'( #include)|(\t#include)', '\n#include', cleaned_data)
         cleaned_data = re.sub(r'( #define)|(\t#define)', '\n#define', cleaned_data)
     return cleaned_data
@@ -47,7 +49,7 @@ def remove_empty_lines(data):
         if data.find("\n") > -1:
             for line in data.splitlines():
                 if len(line.rstrip())>0:
-                    cleaned_data += line + "\n"
+                    cleaned_data = f"{cleaned_data}{line}\n"
         else:
             cleaned_data = data
     return cleaned_data
@@ -59,7 +61,7 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
         data = f.read()
 
     if remove_comments_bool:
-        print_and_log("Removing Comments: "+file_path)
+        print_and_log(f"Removing Comments: {file_path}")
         # data = remove_comments(data) # remove comments (new way found online)
         if debug_mode:
             print_and_log(f"{file_path} before removing comments: \n{data}")
@@ -68,7 +70,7 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
             print_and_log(f"{file_path} after removing comments: \n{data}")
 
     if remove_empty_lines_bool:
-        print_and_log("Removing empty lines: "+file_path)
+        print_and_log(f"Removing empty lines: {file_path}")
         if debug_mode:
             print_and_log(f"{file_path} before removing empty lines: \n{data}")
         data = remove_empty_lines(data)
@@ -76,7 +78,7 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
             print_and_log(f"{file_path} after removing empty lines: \n{data}")
 
     if remove_newlines_bool:
-        print_and_log("Removing new lines: "+file_path)
+        print_and_log(f"Removing new lines: {file_path}")
         if debug_mode:
             print_and_log(f"{file_path} before removing new lines: \n{data}")
         data = remove_all_newlines(data)
@@ -104,7 +106,7 @@ def get_directory_files():
         for name in files:
             this_directory_list.append(os.path.join(root, name))
 
-    print_and_log("This directory has these files:" + str(this_directory_list))
+    print_and_log(f"This directory has these files:{this_directory_list}")
     return this_directory_list
 
 def get_ignored_files():
@@ -123,7 +125,7 @@ def get_ignored_files():
                 line = re.sub(r'\s+', '', line)
             if len(line) > 0:
                 ignored_files.append(line)
-    print_and_log("These files will be ignored: " + str(ignored_files))
+    print_and_log(f"These files will be ignored: {ignored_files}")
 
     return ignored_files
 
