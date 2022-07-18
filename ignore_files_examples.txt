@@ -1,0 +1,7 @@
+//These are examples of ignoring certain folder/files from being cleaned.
+init.sqf //This would make any file with "init.sqf" in it be ignored. Including "shinit.sqf", "logistics\init.sqf", etc.
+DayZ_Epoch_11.Chernarus\init.sqf //This would make only the file named "init.sqf" in the root folder be ignored.
+//Something else to note: You MUST seperate each ignored path/file with a new line.
+//You could consideer wildcards basically being enabled by default.
+init //this would make any file/folder with init be ignored, including something like "logistics\init\file1.sqf", "logistics\init\file2.sqf", etc.
+//ONLY "//" type comments are supported.

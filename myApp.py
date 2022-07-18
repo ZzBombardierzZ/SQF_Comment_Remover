@@ -111,17 +111,20 @@ def get_ignored_files():
     print_and_log("Checking for ignored files")
     ignored_files = []
 
-    if not os.path.isfile("ignore_these_files"):
+    if not os.path.isfile("ignore_these_files.txt"):
         print_and_log("No ignore_these_files.txt file found")
         return ignored_files
 
     with open("ignore_these_files.txt", "r") as f:
-        for line in f:
+        file = f.read()
+        for line in file.splitlines():
             if line.find("//") > -1:
                 line = line[0:(line.find("//"))]
-            ignored_files.append(line.rstrip())
+                line = re.sub(r'\s+', '', line)
+            if len(line) > 0:
+                ignored_files.append(line)
     print_and_log("These files will be ignored: " + str(ignored_files))
-    
+
     return ignored_files
 
 def main_brain():
