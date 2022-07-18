@@ -3,6 +3,11 @@ from pyparsing import cppStyleComment,dblQuotedString
 
 cppStyleComment.ignore(dblQuotedString)
 
+def print_and_log(message:str):
+    print(message)
+    with open("logs.txt", "a") as f:
+        f.write(message + "\n")
+
 # I did not write the comment remover. I had a version I made but it had bugs. This was found on the internet.
 # https://stackoverflow.com/a/18381470
 def remove_comments(string):
@@ -47,34 +52,50 @@ def remove_empty_lines(data):
             cleaned_data = data
     return cleaned_data
 
-def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool, remove_extra_spaces_bool:bool):
-    print("Cleaning: "+file_path)
+def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool, remove_extra_spaces_bool:bool, debug_mode:bool=False):
+    print_and_log("Cleaning: "+file_path)
     
     with open(file_path, "r") as f:
         data = f.read()
 
     if remove_comments_bool:
-        print("Removing Comments: "+file_path)
+        print_and_log("Removing Comments: "+file_path)
         # data = remove_comments(data) # remove comments (new way found online)
+        if debug_mode:
+            print_and_log(f"{file_path} before removing comments: \n{data}")
         data = cppStyleComment.suppress().transformString(data) #newer/safer method
+        if debug_mode:
+            print_and_log(f"{file_path} after removing comments: \n{data}")
 
     if remove_empty_lines_bool:
-        print("Removing empty lines: "+file_path)
+        print_and_log("Removing empty lines: "+file_path)
+        if debug_mode:
+            print_and_log(f"{file_path} before removing empty lines: \n{data}")
         data = remove_empty_lines(data)
+        if debug_mode:
+            print_and_log(f"{file_path} after removing empty lines: \n{data}")
 
     if remove_newlines_bool:
-        print("Removing new lines: "+file_path)
+        print_and_log("Removing new lines: "+file_path)
+        if debug_mode:
+            print_and_log(f"{file_path} before removing new lines: \n{data}")
         data = remove_all_newlines(data)
+        if debug_mode:
+            print_and_log(f"{file_path} after removing new lines: \n{data}")
     
     if remove_extra_spaces_bool:
+        if debug_mode:
+            print_and_log(f"Data before removing extra spaces: {data}")
         data = re.sub(r'[ \t]+', ' ', data) # remove all excess tab or space whitespace
         data = re.sub(r'\n ', '\n', data) # remove extra space at beginning of line from last regex
+        if debug_mode:
+            print_and_log(f"Data after removing extra spaces: {data}")
 
     with open(file_path, "w") as f:
         f.write(data)
 
 def get_directory_files():
-    print("Getting directory paths of cwd")
+    print_and_log("Getting directory paths of cwd")
     path = os.getcwd()
 
     this_directory_list = []
@@ -83,18 +104,43 @@ def get_directory_files():
         for name in files:
             this_directory_list.append(os.path.join(root, name))
 
-    print("This directory has these files:" + str(this_directory_list))
+    print_and_log("This directory has these files:" + str(this_directory_list))
     return this_directory_list
 
-def main_brain():
-    print("Starting Bomb's cleaning service")
-    directory_files = get_directory_files()
-    for file_path in directory_files:
-        if file_path.find(".hpp") > -1 or file_path.find(".ext") > -1:
-            clean_data_etc(file_path, False, True, False, False)
-        elif file_path.find(".sqf") > -1:
-            clean_data_etc(file_path, False, True, False, False)
+def get_ignored_files():
+    print_and_log("Checking for ignored files")
+    ignored_files = []
 
-    print("Bomb's cleaning service has finished")
+    if not os.path.isfile("ignore_these_files"):
+        print_and_log("No ignore_these_files.txt file found")
+        return ignored_files
+
+    with open("ignore_these_files.txt", "r") as f:
+        for line in f:
+            if line.find("//") > -1:
+                line = line[0:(line.find("//"))]
+            ignored_files.append(line.rstrip())
+    print_and_log("These files will be ignored: " + str(ignored_files))
+    
+    return ignored_files
+
+def main_brain():
+    print_and_log("Starting Bomb's cleaning service")
+    debug_mode = True
+    directory_files = get_directory_files()
+    ignored_files = get_ignored_files()
+    for file_path in directory_files:
+        ignore = False
+        for ignored_file in ignored_files:
+            if file_path.find(ignored_file) > -1:
+                ignore = True
+                break
+        if not ignore:
+            if file_path.find(".hpp") > -1 or file_path.find(".ext") > -1:
+                clean_data_etc(file_path, False, True, False, False, debug_mode)
+            elif file_path.find(".sqf") > -1:
+                clean_data_etc(file_path, False, True, False, False, debug_mode)
+
+    print_and_log("Bomb's cleaning service has finished")
 
 main_brain()
