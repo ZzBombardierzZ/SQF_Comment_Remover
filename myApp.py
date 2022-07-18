@@ -1,4 +1,4 @@
-import re, os
+import re, os, json
 from pyparsing import cppStyleComment,dblQuotedString
 
 cppStyleComment.ignore(dblQuotedString)
@@ -33,7 +33,7 @@ def remove_all_newlines(data):
     if len(data) > 0:
         if data.find("\n") > -1:
             for line in data.splitlines():
-                if line.find("#") == -1 and line.find(";") > -1 and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
+                if line.find("#") == -1 and (line.find(";") > -1 or line.find("{")) and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
                     cleaned_data += line.rstrip() + " "
                 else :
                     cleaned_data += line + "\n"
@@ -129,7 +129,28 @@ def get_ignored_files():
 
 def main_brain():
     print_and_log("Starting Bomb's cleaning service")
-    debug_mode = True
+
+    if os.path.isfile("settings.json"):
+        with open("settings.json", "r") as f:
+            settings = json.load(f)
+            print_and_log("Settings loaded")
+    else:
+        print_and_log("No settings file found")
+        return
+
+    try:
+        debug_mode_bool = settings["Extras"]["excessive_debug_mode"]
+        remove_comments_bool = settings["Cleaner_Config"]["remove_comments"]
+        remove_empty_lines_bool = settings["Cleaner_Config"]["remove_empty_lines"]
+        remove_excess_spaces_bool = settings["Cleaner_Config"]["remove_excess_spaces"]
+        remove_sqf_newlines_bool = settings["Cleaner_Config"]["remove_sqf_newlines"]
+        remove_hppOrExt_newlines_bool = settings["Cleaner_Config"]["remove_hppOrExt_newlines"]
+    except Exception as e:
+        print_and_log(f"Error loading settings. Check your settings.json file. Error message:\n{e}")
+        return
+    
+
+
     directory_files = get_directory_files()
     ignored_files = get_ignored_files()
     for file_path in directory_files:
@@ -140,9 +161,9 @@ def main_brain():
                 break
         if not ignore:
             if file_path.find(".hpp") > -1 or file_path.find(".ext") > -1:
-                clean_data_etc(file_path, False, True, False, False, debug_mode)
+                clean_data_etc(file_path, remove_comments_bool, remove_empty_lines_bool, remove_hppOrExt_newlines_bool, remove_excess_spaces_bool, debug_mode_bool)
             elif file_path.find(".sqf") > -1:
-                clean_data_etc(file_path, False, True, False, False, debug_mode)
+                clean_data_etc(file_path, remove_comments_bool, remove_empty_lines_bool, remove_sqf_newlines_bool, remove_excess_spaces_bool, debug_mode_bool)
 
     print_and_log("Bomb's cleaning service has finished")
 
