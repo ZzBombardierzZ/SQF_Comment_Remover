@@ -43,6 +43,8 @@ def remove_empty_lines(data):
             for line in data.splitlines():
                 if len(line.rstrip())>0:
                     cleaned_data += line + "\n"
+        else:
+            cleaned_data = data
     return cleaned_data
 
 def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool, remove_extra_spaces_bool:bool):
@@ -89,9 +91,9 @@ def main_brain():
     directory_files = get_directory_files()
     for file_path in directory_files:
         if file_path.find(".hpp") > -1 or file_path.find(".ext") > -1:
-            clean_data_etc(file_path, True, True, False, True)
+            clean_data_etc(file_path, False, True, False, False)
         elif file_path.find(".sqf") > -1:
-            clean_data_etc(file_path, True, True, True, True)
+            clean_data_etc(file_path, False, True, False, False)
 
     print("Bomb's cleaning service has finished")
 
