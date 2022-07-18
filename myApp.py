@@ -34,11 +34,13 @@ def remove_all_newlines(data):
         if data.find("\n") > -1:
             for line in data.splitlines():
                 if line.find("#") == -1 and (line.find(";") > -1 or line.find("{") > -1) and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
-                    cleaned_data = f"{cleaned_data}{line.rstrip()} "
+                    cleaned_data = f"{cleaned_data}{line.strip()} "
                 else :
                     cleaned_data = f"{cleaned_data}{line}\n"
         else:
             cleaned_data = data
+        #cleaned_data = re.sub(r'\s+{', ' {', cleaned_data)
+        cleaned_data = re.sub(r';\n', ';', cleaned_data)
         cleaned_data = re.sub(r'( #include)|(\t#include)', '\n#include', cleaned_data)
         cleaned_data = re.sub(r'( #define)|(\t#define)', '\n#define', cleaned_data)
     return cleaned_data
@@ -53,6 +55,16 @@ def remove_empty_lines(data):
         else:
             cleaned_data = data
     return cleaned_data
+
+def remove_extra_spaces(data):
+    data = re.sub(r'[ \t]+', ' ', data) # remove all excess tab or space whitespace
+    data = re.sub(r'\n ', '\n', data) # remove extra space at beginning of line from last regex
+    data = re.sub(r'[\s]*\n[\s]*', '\n', data)
+    data = re.sub(r';[ \t]+', ';', data)
+    data = re.sub(r'\s*\{\s*!\#', '{', data)
+    data = re.sub(r'\s*\=\s*', '=', data)
+
+    return data
 
 def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool, remove_extra_spaces_bool:bool, debug_mode:bool=False):
     print_and_log("Cleaning: "+file_path)
@@ -88,8 +100,7 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
     if remove_extra_spaces_bool:
         if debug_mode:
             print_and_log(f"Data before removing extra spaces: {data}")
-        data = re.sub(r'[ \t]+', ' ', data) # remove all excess tab or space whitespace
-        data = re.sub(r'\n ', '\n', data) # remove extra space at beginning of line from last regex
+        data = remove_extra_spaces(data)
         if debug_mode:
             print_and_log(f"Data after removing extra spaces: {data}")
 
