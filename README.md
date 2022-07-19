@@ -20,12 +20,17 @@ The purpose of this project is to provide a simple way to remove comments, empty
     * `remove_sqf_newlines`: Removes all newlines from .sqf files except #include and #define lines.
     * `remove_hppOrExt_newlines`: Removes all newlines from .hpp and .ext files except #include and #define lines.
     * `excessive_debug_mode`: Logs the before and after for each file for each step. This is only useful for testing and debugging. Not recommended to use unless there are issues you are reporting back to me.
+    * `optional_specified_folder_path`: If you want to specify a folder path to remove comments from, you can do so by setting the `optional_specified_folder_path` to the path you want to remove comments and clean from. **Otherwise** it will use the current working directory of the executable and do any subfolders within it.
+        * An example of a folder path: `C:\MyServer\Server\MPMissions\DayZ_Epoch_11.Chernarus`
 * Warning: If you accidentally run this in somewhere like the root of your C drive, it will likely run for a long time searching for sqf, hpp, and ext files in the entire drive and modify them respective to the exe you're using. So **DO NOT DO THAT**. While I __should__ have designed it to require to be within a MPMission folder, I'm not responsible for any damage you might cause.
 
 Let me know if you run into any issues or have any suggestions for the future. I hope you enjoy this tool.
 
 
 ## Update History:
+* v1.4 - 7/19/2020
+    * Added `optional_specified_folder_path`
+    * Fixed errors with #ifndef, #endif, #if, #else and #ifdef
 * v1.3 - 7/18/22: 
     * Adds option to ignore certain files/paths from the cleaner using ignore_these_files.txt 
     * Adds optional extra logging when running myApp.py rather than one of the executables. 
