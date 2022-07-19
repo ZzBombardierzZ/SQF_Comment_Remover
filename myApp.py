@@ -113,9 +113,19 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
     with open(file_path, "w") as f:
         f.write(data)
 
-def get_directory_files():
-    print_and_log("Getting directory paths of cwd")
-    path = os.getcwd()
+def get_directory_files(optional_folder_path):
+
+    if optional_folder_path != "" and optional_folder_path != None and os.path.isdir(optional_folder_path):
+        print_and_log(f"Getting files from specified folder: {optional_folder_path}")
+        path = optional_folder_path
+    else:
+        if optional_folder_path != "":
+            print_and_log(f"Specified folder path is invalid: {optional_folder_path}")
+            print_and_log("Exiting program. Please check the optional specified folder path in settings.json and try again.")
+            exit()
+        else:
+            print_and_log("Getting directory paths of cwd")
+            path = os.getcwd()
 
     this_directory_list = []
 
@@ -158,6 +168,12 @@ def main_brain():
         return
 
     try:
+        optional_folder_path = settings["Extras"]["optional_specified_folder_path"]
+    except:
+        optional_folder_path = ""
+        print_and_log("No optional folder path specified")
+
+    try:
         debug_mode_bool = settings["Extras"]["excessive_debug_mode"]
         remove_comments_bool = settings["Cleaner_Config"]["remove_comments"]
         remove_empty_lines_bool = settings["Cleaner_Config"]["remove_empty_lines"]
@@ -170,7 +186,7 @@ def main_brain():
     
 
 
-    directory_files = get_directory_files()
+    directory_files = get_directory_files(optional_folder_path)
     ignored_files = get_ignored_files()
     for file_path in directory_files:
         ignore = False
