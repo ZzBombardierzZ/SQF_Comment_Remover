@@ -41,8 +41,14 @@ def remove_all_newlines(data):
             cleaned_data = data
         #cleaned_data = re.sub(r'\s+{', ' {', cleaned_data)
         cleaned_data = re.sub(r';\n', ';', cleaned_data)
-        cleaned_data = re.sub(r'( #include)|(\t#include)', '\n#include', cleaned_data)
-        cleaned_data = re.sub(r'( #define)|(\t#define)', '\n#define', cleaned_data)
+        cleaned_data = re.sub(r'( #include)|(\t#include)|(\S#include)', '\n#include', cleaned_data)
+        cleaned_data = re.sub(r'( #define)|(\t#define)|(\S#define)', '\n#define', cleaned_data)
+        #cleaned_data = re.sub(r'( #ifdef)|(\t#ifdef)|(\S#ifdef)', '\n#ifdef', cleaned_data)
+        cleaned_data = re.sub(r'( #endif)|(\t#endif)|(\S#endif)', '\n#endif', cleaned_data)
+        cleaned_data = re.sub(r'( #undef)|(\t#undef)|(\S#undef)', '\n#undef', cleaned_data)
+        cleaned_data = re.sub(r'( #if)|(\t#if)|(\S#if)', '\n#if', cleaned_data)
+        #cleaned_data = re.sub(r'( #ifndef )|(\t#ifndef )|(\S#ifndef )', '\n#ifndef ', cleaned_data)
+        cleaned_data = re.sub(r'( #else )|(\t#else )|(\S#else )', '\n#else ', cleaned_data)
     return cleaned_data
 
 def remove_empty_lines(data):
