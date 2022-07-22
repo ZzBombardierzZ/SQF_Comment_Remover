@@ -75,7 +75,7 @@ def remove_extra_spaces(data):
 def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_bool:bool, remove_newlines_bool:bool, remove_extra_spaces_bool:bool, debug_mode:bool=False):
     print_and_log("Cleaning: "+file_path)
     
-    with open(file_path, "r") as f:
+    with open(file_path, "r", encoding="utf-8") as f:
         data = f.read()
 
     if remove_comments_bool:
@@ -102,6 +102,14 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
         data = remove_all_newlines(data)
         if debug_mode:
             print_and_log(f"{file_path} after removing new lines: \n{data}")
+
+    if remove_empty_lines_bool:
+        print_and_log(f"Removing empty lines (again): {file_path}")
+        if debug_mode:
+            print_and_log(f"{file_path} before removing empty lines: \n{data}")
+        data = remove_empty_lines(data)
+        if debug_mode:
+            print_and_log(f"{file_path} after removing empty lines: \n{data}")
     
     if remove_extra_spaces_bool:
         if debug_mode:
@@ -110,7 +118,7 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
         if debug_mode:
             print_and_log(f"Data after removing extra spaces: {data}")
 
-    with open(file_path, "w") as f:
+    with open(file_path, "w", encoding="utf-8") as f:
         f.write(data)
 
 def get_directory_files(optional_folder_path):

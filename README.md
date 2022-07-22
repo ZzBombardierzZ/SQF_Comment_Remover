@@ -28,7 +28,10 @@ Let me know if you run into any issues or have any suggestions for the future. I
 
 
 ## Update History:
-* v1.4 - 7/19/2020
+* v1.4.1 - 7/22/22
+    * Added a duplicate remove extra lines function to fix a situation where if the file started with #include or #define, it would have an extra newline above it.
+    * Fixed an issue with encoding not being set to utf-8, causing possible encoding errors. Example: The first line in a file starting with #include or #define was adding a BOM to the file.
+* v1.4 - 7/19/22
     * Added `optional_specified_folder_path`
     * Fixed errors with #ifndef, #endif, #if, #else and #ifdef
 * v1.3 - 7/18/22: 
