@@ -32,23 +32,25 @@ def remove_all_newlines(data):
     cleaned_data = ""
     if len(data) > 0:
         if data.find("\n") > -1:
+            safety_chars = [";","{","}","(",")","[","]",","] #without this check, we get "ErrorMessage: Config : some input after EndOfFile" when starting the server, that is: if we try to remove without the (any(x in line for x in safety_chars))
             for line in data.splitlines():
-                if line.find("#") == -1 and (line.find(";") > -1 or line.find("{") > -1) and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
+                if line.find("#") == -1 and (any(x in line for x in safety_chars)) and not (line.rstrip().endswith("\"") or line.rstrip().endswith("'") or line.rstrip().endswith("\\")):
                     cleaned_data = f"{cleaned_data}{line.strip()} "
                 else :
                     cleaned_data = f"{cleaned_data}{line}\n"
         else:
             cleaned_data = data
         #cleaned_data = re.sub(r'\s+{', ' {', cleaned_data)
-        cleaned_data = re.sub(r';\n', ';', cleaned_data)
-        cleaned_data = re.sub(r'( #include)|(\t#include)|(\S#include)', '\n#include', cleaned_data)
-        cleaned_data = re.sub(r'( #define)|(\t#define)|(\S#define)', '\n#define', cleaned_data)
-        #cleaned_data = re.sub(r'( #ifdef)|(\t#ifdef)|(\S#ifdef)', '\n#ifdef', cleaned_data)
-        cleaned_data = re.sub(r'( #endif)|(\t#endif)|(\S#endif)', '\n#endif', cleaned_data)
-        cleaned_data = re.sub(r'( #undef)|(\t#undef)|(\S#undef)', '\n#undef', cleaned_data)
-        cleaned_data = re.sub(r'( #if)|(\t#if)|(\S#if)', '\n#if', cleaned_data)
-        #cleaned_data = re.sub(r'( #ifndef )|(\t#ifndef )|(\S#ifndef )', '\n#ifndef ', cleaned_data)
-        cleaned_data = re.sub(r'( #else )|(\t#else )|(\S#else )', '\n#else ', cleaned_data)
+        cleaned_data = re.sub(r'(?!#)(?!.*);\n', ';', cleaned_data)
+        cleaned_data = re.sub(r'( |\t|\S)#(define|include|ifdef|endif|undef|if|else)', r'\n#\2', cleaned_data)
+        # cleaned_data = re.sub(r'( #include)|(\t#include)|(\S#include)', '\n#include', cleaned_data)
+        # cleaned_data = re.sub(r'( #define)|(\t#define)|(\S#define)', '\n#define', cleaned_data)
+        # #cleaned_data = re.sub(r'( #ifdef)|(\t#ifdef)|(\S#ifdef)', '\n#ifdef', cleaned_data)
+        # cleaned_data = re.sub(r'( #endif)|(\t#endif)|(\S#endif)', '\n#endif', cleaned_data)
+        # cleaned_data = re.sub(r'( #undef)|(\t#undef)|(\S#undef)', '\n#undef', cleaned_data)
+        # cleaned_data = re.sub(r'( #if)|(\t#if)|(\S#if)', '\n#if', cleaned_data)
+        # #cleaned_data = re.sub(r'( #ifndef )|(\t#ifndef )|(\S#ifndef )', '\n#ifndef ', cleaned_data)
+        # cleaned_data = re.sub(r'( #else )|(\t#else )|(\S#else )', '\n#else ', cleaned_data)
     return cleaned_data
 
 def remove_empty_lines(data):
@@ -66,9 +68,10 @@ def remove_extra_spaces(data):
     data = re.sub(r'[ \t]+', ' ', data) # remove all excess tab or space whitespace
     data = re.sub(r'\n ', '\n', data) # remove extra space at beginning of line from last regex
     data = re.sub(r'[\s]*\n[\s]*', '\n', data)
-    data = re.sub(r';[ \t]+', ';', data)
-    data = re.sub(r'\s*\{\s*!\#', '{', data)
-    data = re.sub(r'\s*\=\s*', '=', data)
+    # data = re.sub(r';[ \t]+', ';', data)
+    # data = re.sub(r'\s*\{\s*!\#', '{', data)
+    # data = re.sub(r'\s*\=\s*', '=', data)
+    data = re.sub(r'^(?![ \t]*#)(.*?)[ \t]*([\(\)\{\}\=])[ \t]*(.*?)$', r'\1\2\3', data)
 
     return data
 
@@ -120,6 +123,7 @@ def clean_data_etc(file_path:str, remove_comments_bool:bool, remove_empty_lines_
 
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(data)
+        f.close()
 
 def get_directory_files(optional_folder_path):
 

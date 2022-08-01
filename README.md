@@ -28,20 +28,23 @@ Let me know if you run into any issues or have any suggestions for the future. I
 
 
 ## Update History:
-* v1.4.1 - 7/22/22
+* v1.4.2 - 2022/8/1
+    * Remove even more extra spaces with `remove_excess_spaces`
+    * Fixes many bugs regarding lines with # such as #include and #define
+* v1.4.1 - 2022/7/22
     * Added a duplicate remove extra lines function to fix a situation where if the file started with #include or #define, it would have an extra newline above it.
     * Fixed an issue with encoding not being set to utf-8, causing possible encoding errors. Example: The first line in a file starting with #include or #define was adding a BOM to the file.
-* v1.4 - 7/19/22
+* v1.4 - 2022/7/19
     * Added `optional_specified_folder_path`
     * Fixed errors with #ifndef, #endif, #if, #else and #ifdef
-* v1.3 - 7/18/22: 
+* v1.3 - 2022/7/18: 
     * Adds option to ignore certain files/paths from the cleaner using ignore_these_files.txt 
     * Adds optional extra logging when running myApp.py rather than one of the executables. 
     * Switched from multiple executables to one executable using setttings.json
     * Should parse a little bit better, getting rid of even more unnecessary whitespace and such.
-* v1.2 - 7/1/22: Updated all exes to fix issue with files being wiped with newline remover and empty line remover. Also added Excess whitespace remover and included it into clean_it_all. Turns several spaces or tabs into 1 space.
-* v1.1 - 6/28/22: New comment parsing method. Fixes issues with strings such as `https://` and similar which ARE NOT comments.
-* v1.0 - 6/28/22: Initial release.
+* v1.2 - 2022/7/1: Updated all exes to fix issue with files being wiped with newline remover and empty line remover. Also added Excess whitespace remover and included it into clean_it_all. Turns several spaces or tabs into 1 space.
+* v1.1 - 2022/6/28: New comment parsing method. Fixes issues with strings such as `https://` and similar which ARE NOT comments.
+* v1.0 - 2022/6/28: Initial release.
 
 ## Legal
 * You are welcome to use this code in any way you want.
